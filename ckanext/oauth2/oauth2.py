@@ -100,6 +100,7 @@ class OAuth2Helper(object):
         return toolkit.redirect_to(auth_url.encode('utf-8'))
 
     def get_token(self):
+        log.info('get_token in ...')
         oauth = OAuth2Session(self.client_id, redirect_uri=self.redirect_uri, scope=self.scope)
 
         # Just because of FIWARE Authentication
@@ -119,8 +120,8 @@ class OAuth2Helper(object):
                                       headers=headers,
                                       client_secret=self.client_secret,
                                       authorization_response=toolkit.request.url,
-                                      verify=self.verify_https,
-                                      include_client_id=True)
+                                      verify=self.verify_https)
+            log.info('get_token result is: ', str(token))
         except requests.exceptions.SSLError as e:
             # TODO search a better way to detect invalid certificates
             if "verify failed" in six.text_type(e):
@@ -131,9 +132,8 @@ class OAuth2Helper(object):
         return token
 
     def identify(self, token):
-
+        log.info('identify token: ', str(token))
         if self.jwt_enable:
-
             access_token = bytes(token['access_token'])
             user_data = jwt.decode(access_token, verify=False)
             user = self.user_json(user_data)
@@ -143,9 +143,10 @@ class OAuth2Helper(object):
                 if self.legacy_idm:
                     profile_response = requests.get(self.profile_api_url + '?access_token=%s' % token['access_token'], verify=self.verify_https)
                 else:
+                    log.info('identify 1 :', str(self.client_id), str(self.profile_api_url), str(self.verify_https))
                     oauth = OAuth2Session(self.client_id, token=token)
                     profile_response = oauth.get(self.profile_api_url, verify=self.verify_https)
-
+                    log.info('identify oauth, profile_response', str(oauth), str(profile_response))
             except requests.exceptions.SSLError as e:
                 # TODO search a better way to detect invalid certificates
                 if "verify failed" in six.text_type(e):
@@ -163,12 +164,12 @@ class OAuth2Helper(object):
             else:
                 user_data = profile_response.json()
                 user = self.user_json(user_data)
-
+                log.info('user:', str(user))
         # Save the user in the database
         model.Session.add(user)
         model.Session.commit()
         model.Session.remove()
-
+        log.info('user.name:', str(user.name))
         return user.name
 
     def user_json(self, user_data):
