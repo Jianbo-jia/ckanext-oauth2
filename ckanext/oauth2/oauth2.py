@@ -121,7 +121,7 @@ class OAuth2Helper(object):
                                       client_secret=self.client_secret,
                                       authorization_response=toolkit.request.url,
                                       verify=self.verify_https)
-            log.info('get_token result is: ', str(token))
+            log.info('get_token result is: ', token)
         except requests.exceptions.SSLError as e:
             # TODO search a better way to detect invalid certificates
             if "verify failed" in six.text_type(e):
@@ -132,7 +132,7 @@ class OAuth2Helper(object):
         return token
 
     def identify(self, token):
-        log.info('identify token: ', str(token))
+        log.info('identify token: ', token)
         if self.jwt_enable:
             access_token = bytes(token['access_token'])
             user_data = jwt.decode(access_token, verify=False)
@@ -141,7 +141,9 @@ class OAuth2Helper(object):
 
             try:
                 if self.legacy_idm:
+                    log.info('identify self.legacy_idm :', self.profile_api_url + '?access_token=%s' % token['access_token'], self.verify_https)
                     profile_response = requests.get(self.profile_api_url + '?access_token=%s' % token['access_token'], verify=self.verify_https)
+                    log.info('profile_response:', profile_response)
                 else:
                     log.info('identify 1 :', str(self.client_id), str(self.profile_api_url), str(self.verify_https))
                     oauth = OAuth2Session(self.client_id, token=token)
