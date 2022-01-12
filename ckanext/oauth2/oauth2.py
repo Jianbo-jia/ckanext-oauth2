@@ -141,8 +141,8 @@ class OAuth2Helper(object):
 
             try:
                 if self.legacy_idm:
-                    log.info('identify self.legacy_idm :', self.profile_api_url + '?access_token=%s' % token['access_token'], self.verify_https)
-                    profile_response = requests.get(self.profile_api_url + '?access_token=%s' % token['access_token'], verify=self.verify_https)
+                    log.info('identify self.legacy_idm :', self.profile_api_url + '?access_token=' + token['access_token'], self.verify_https)
+                    profile_response = requests.get(self.profile_api_url + '?access_token=' + token['access_token'], verify=self.verify_https)
                     log.info('profile_response:', profile_response)
                 else:
                     log.info('identify 1 :', str(self.client_id), str(self.profile_api_url), str(self.verify_https))
