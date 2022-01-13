@@ -169,7 +169,7 @@ class OAuth2Helper(object):
                 log.info("==============================user begin =======================================")
                 user = self.user_json(user_data)
                 log.info("==============================user end =======================================")
-                log.info('user: %' %user)
+                log.info('user: %s' %user)
         # Save the user in the database
         log.info('Save the user in the database: %s' % user)
         model.Session.add(user)
