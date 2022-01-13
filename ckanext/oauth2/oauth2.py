@@ -177,6 +177,10 @@ class OAuth2Helper(object):
         return user.name
 
     def user_json(self, user_data):
+        log.info('*********user_json***********')
+        log.info('user_data=%s, type=%s' %(user_data, type(user_data)))
+        log.info(self.profile_api_mail_field+'  '+self.profile_api_user_field)
+
         email = user_data[self.profile_api_mail_field]
         user_name = user_data[self.profile_api_user_field]
         log.info('user_json email=%s, user_name=%s' %(email, user_name))
@@ -184,13 +188,14 @@ class OAuth2Helper(object):
         # Some providers, like Google and FIWARE only allows one account per email
         user = None
         users = model.User.by_email(email)
+        log.info('users in model :%s' %users)
         if len(users) == 1:
             user = users[0]
 
         # If the user does not exist, we have to create it...
         if user is None:
             user = model.User(email=email)
-
+        log.info('new or old user :%s' % user)
         # Now we update his/her user_name with the one provided by the OAuth2 service
         # In the future, users will be obtained based on this field
         user.name = user_name
