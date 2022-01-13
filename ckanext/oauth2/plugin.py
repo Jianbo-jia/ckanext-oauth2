@@ -142,10 +142,12 @@ class OAuth2Plugin(plugins.SingletonPlugin):
                 apikey = ''
 
         # This API Key is not the one of CKAN, it's the one provided by the OAuth2 Service
+        log.info('apikey = %s' %apikey)
         if apikey:
             try:
                 token = {'access_token': apikey}
                 user_name = self.oauth2helper.identify(token)
+                log.info('controller token=%s, user_name=%s' %(token, user_name))
             except Exception:
                 pass
 

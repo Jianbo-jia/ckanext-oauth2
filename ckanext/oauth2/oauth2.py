@@ -168,12 +168,12 @@ class OAuth2Helper(object):
             else:
                 user_data = profile_response.json()
                 user = self.user_json(user_data)
-                log.info('user:', str(user))
+                log.info('user: %' %user )
         # Save the user in the database
         model.Session.add(user)
         model.Session.commit()
         model.Session.remove()
-        log.info('user.name:', str(user.name))
+        log.info('user.name: %s' % user.name)
         return user.name
 
     def user_json(self, user_data):
