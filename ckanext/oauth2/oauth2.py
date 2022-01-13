@@ -145,12 +145,11 @@ class OAuth2Helper(object):
                     u = self.profile_api_url + '?access_token=' + token['access_token']
                     log.info('identify self.legacy_idm : %s' %u)
                     profile_response = requests.get(self.profile_api_url + '?access_token=' + token['access_token'], verify=self.verify_https)
-                    log.info('profile_response: %s' % profile_response)
+                    log.info('legacy_idm =true, profile_response: %s' % profile_response)
                 else:
-                    log.info('identify 1 :', str(self.client_id), str(self.profile_api_url), str(self.verify_https))
                     oauth = OAuth2Session(self.client_id, token=token)
                     profile_response = oauth.get(self.profile_api_url, verify=self.verify_https)
-                    log.info('identify oauth, profile_response', str(oauth), str(profile_response))
+                    log.info('legacy_idm =false, identify oauth, profile_response %s' %oauth)
             except requests.exceptions.SSLError as e:
                 # TODO search a better way to detect invalid certificates
                 if "verify failed" in six.text_type(e):
@@ -159,6 +158,7 @@ class OAuth2Helper(object):
                     raise
 
             # Token can be invalid
+            log.info("profile_response ok=[ %s ], json=[ %s ]"  %(profile_response.ok, profile_response.json()))
             if not profile_response.ok:
                 error = profile_response.json()
                 if error.get('error', '') == 'invalid_token':
