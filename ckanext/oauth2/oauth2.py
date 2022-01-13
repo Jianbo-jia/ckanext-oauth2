@@ -194,7 +194,7 @@ class OAuth2Helper(object):
 
         # If the user does not exist, we have to create it...
         if user is None:
-            user = model.User(email=email)
+            user = model.User(id=user_name, email=email)
         log.info('new or old user :%s' % user)
         # Now we update his/her user_name with the one provided by the OAuth2 service
         # In the future, users will be obtained based on this field
