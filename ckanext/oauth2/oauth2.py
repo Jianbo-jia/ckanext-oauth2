@@ -100,9 +100,9 @@ class OAuth2Helper(object):
         return toolkit.redirect_to(auth_url.encode('utf-8'))
 
     def get_token(self):
-        log.info('get_token in ...')
+        log.info('get_token in ...', self.verify_https)
         oauth = OAuth2Session(self.client_id, redirect_uri=self.redirect_uri, scope=self.scope)
-
+        log.info('oauth is :', oauth)
         # Just because of FIWARE Authentication
         headers = {
             'Accept': 'application/json',
