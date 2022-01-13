@@ -100,10 +100,9 @@ class OAuth2Helper(object):
         return toolkit.redirect_to(auth_url.encode('utf-8'))
 
     def get_token(self):
-        print('self.verify_https=%s' % self.verify_https)
         log.info('get_token in ...%s' % self.verify_https)
         oauth = OAuth2Session(self.client_id, redirect_uri=self.redirect_uri, scope=self.scope)
-        log.info('oauth is :', oauth)
+        log.info('get_token oauth is : %s' %oauth)
         # Just because of FIWARE Authentication
         headers = {
             'Accept': 'application/json',
@@ -168,8 +167,9 @@ class OAuth2Helper(object):
             else:
                 user_data = profile_response.json()
                 user = self.user_json(user_data)
-                log.info('user: %' %user )
+                log.info('user: %' %user)
         # Save the user in the database
+        log.info('Save the user in the database: %s' % user)
         model.Session.add(user)
         model.Session.commit()
         model.Session.remove()
@@ -179,7 +179,7 @@ class OAuth2Helper(object):
     def user_json(self, user_data):
         email = user_data[self.profile_api_mail_field]
         user_name = user_data[self.profile_api_user_field]
-
+        log.info('user_json email=%s, user_name=%s' %(email, user_name))
         # In CKAN can exists more than one user associated with the same email
         # Some providers, like Google and FIWARE only allows one account per email
         user = None
@@ -202,7 +202,7 @@ class OAuth2Helper(object):
         # Update sysadmin status
         if self.profile_api_groupmembership_field != "" and self.profile_api_groupmembership_field in user_data:
             user.sysadmin = self.sysadmin_group_name in user_data[self.profile_api_groupmembership_field]
-
+        log.info('user_json user=%s' %user)
         return user
 
     def _get_rememberer(self, environ):
